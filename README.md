@@ -1,5 +1,3 @@
-# Proposed Model (CNN+OS Model) for Software Change-Proneness Prediction
-
 This repository contains a Google Colab implementation of a hybrid machine-learning and deep-learning framework for predicting **change-prone software modules** from object-oriented software metrics.
 
 The proposed framework is displayed throughout the experimental results as:
@@ -25,76 +23,10 @@ The notebook generates a reproducible software-metrics dataset, preprocesses the
 
 \---
 
-## Proposed Architecture
-
-The main processing pipeline is:
-
-```text
-Software Metrics Dataset
-          |
-          v
-Train / Validation / Test Split
-          |
-          v
-Standardization
-          |
-          v
-Random Over-Sampling
-          |
-          v
-One-Dimensional CNN Feature Learning
-          |
-          +-----------------------------+
-          |                             |
-          v                             v
-SVM on Original Features      SVM on CNN Deep Features
-          |                             |
-          +--------------+--------------+
-                         |
-                         v
-          Validation-Based Probability Fusion
-                         |
-                         v
-             Optimal Threshold Selection
-                         |
-                         v
-        Change-Prone / Not Change-Prone Prediction
-```
-
-The model name shown in all tables and plots remains **Proposed Model (CNN+OS model)**.
-
-\---
-
-## Main Features
-
-* Reproducible synthetic software-metrics dataset
-* Stratified training, validation, and test partitions
-* Standardization fitted only on training data
-* Random Over-Sampling for class-imbalance handling
-* SMOTE and SMOTEENN comparison
-* Functional Keras CNN implementation
-* CNN-based compact deep-feature extraction
-* SVM hyperparameter tuning through validation data
-* Original-feature and deep-feature SVM classifiers
-* Validation-based probability-fusion weight selection
-* Validation-based optimal threshold selection
-* Baseline comparison with:
-
-  * Support Vector Machine
-  * Random Forest
-  * Random Over-Sampling with CatBoost
-  * Convolutional Neural Network
-  * Recurrent Neural Network
-  * GNN-like neural architecture
-* Automatic result export to Excel
-* Model serialization for later inference
-* Publication-ready comparison graphs
-
-\---
 
 ## Dataset
 
-The notebook generates a synthetic binary-classification dataset with **12,000 samples** and **20 software metrics**.
+**12,000 samples** and **20 software metrics**.
 
 ### Input Metrics
 
@@ -121,7 +53,7 @@ The notebook generates a synthetic binary-classification dataset with **12,000 s
 |`max\_cc`|Maximum Cyclomatic Complexity|
 |`avg\_cc`|Average Cyclomatic Complexity|
 
-### Target
+
 
 |Field|Meaning|
 |-|-|
@@ -146,90 +78,6 @@ The dataset is divided using stratified sampling:
 |Testing|20%|
 
 The validation set is used for hyperparameter selection, probability-fusion selection, and threshold optimization. The test set is reserved for final performance evaluation.
-
-\---
-
-## Proposed CNN Configuration
-
-The CNN feature extractor contains:
-
-```text
-Input
-  |
-Conv1D: 192 filters, kernel size 3, ReLU
-  |
-Batch Normalization
-  |
-Conv1D: 128 filters, kernel size 3, ReLU
-  |
-Batch Normalization
-  |
-MaxPooling1D
-  |
-Dropout
-  |
-Conv1D: 96 filters, kernel size 3, ReLU
-  |
-Batch Normalization
-  |
-Global Average Pooling
-  |
-Dense: 192 units, ReLU
-  |
-Dropout
-  |
-Compact Feature Layer: 96 units, ReLU
-  |
-Sigmoid Output
-```
-
-The `compact\_feature\_layer` is used to obtain deep representations for the deep-feature SVM.
-
-\---
-
-## Validation-Based Threshold Optimization
-
-The classification threshold is searched from `0.20` to `0.80` in increments of `0.01`.
-
-For each threshold, a composite validation score is calculated as:
-
-```text
-Composite Score =
-0.20 × Accuracy
-+ 0.20 × Precision
-+ 0.20 × Recall
-+ 0.25 × F1-Score
-+ 0.15 × ROC-AUC
-```
-
-The threshold with the highest composite validation score is selected and then applied to the test probabilities.
-
-\---
-
-## Probability Fusion
-
-The proposed model combines three probability outputs:
-
-1. SVM probability based on the original standardized metrics
-2. SVM probability based on CNN-extracted deep features
-3. CNN sigmoid probability
-
-The final probability is calculated as:
-
-```text
-Final Probability =
-w1 × Original-Feature SVM Probability
-+ w2 × Deep-Feature SVM Probability
-+ w3 × CNN Probability
-```
-
-where:
-
-```text
-w1 + w2 + w3 = 1
-```
-
-The fusion weights are selected using validation-set performance.
 
 \---
 
@@ -285,26 +133,9 @@ The following results were obtained from the current experiment.
 |Convolutional Neural Networks (CNN)|4.72|4.12|
 |Graph Neural Networks (GNNs)|4.83|1.00|
 
-> Experimental values may vary slightly because of runtime environment, hardware, TensorFlow version, and stochastic model training.
 
 \---
 
-## Repository Contents
-
-```text
-.
-├── Improved\_Proposed\_CNN\_OS\_Model(1).ipynb
-├── README.md
-└── outputs/
-    ├── synthetic\_change\_proneness\_paper\_like.csv
-    ├── synthetic\_dataset\_model\_results\_improved.xlsx
-    ├── f1\_score\_vs\_parameters\_improved.png
-    └── saved\_models\_improved/
-```
-
-The output files are generated automatically when the notebook is executed.
-
-\---
 
 ## Requirements
 
@@ -333,7 +164,7 @@ Recommended environment:
 
 ## Running the Project in Google Colab
 
-1. Upload `Software\_Change‐Proneness\_Prediction.ipynb` to Google Drive.
+1. Upload Software_Change‐Proneness_Prediction.ipynb to Google Drive.
 2. Open the file with Google Colaboratory.
 3. Select:
 
@@ -343,17 +174,7 @@ Runtime → Change runtime type → T4 GPU
 
 4. Run the notebook cell.
 5. Authorize Google Drive when prompted.
-6. Results will be stored under:
-
-```text
-/content/drive/MyDrive/DTU-Jyoti-Patidar/Dataset
-```
-
-To use another directory, update:
-
-```python
-DATASET\_PATH = "/content/drive/MyDrive/DTU-Jyoti-Patidar/Dataset"
-```
+6. Results will be stored under drive/repository:
 
 \---
 
@@ -383,39 +204,4 @@ pip install imbalanced-learn tensorflow scikit-learn pandas matplotlib openpyxl 
 4. Execute the notebook using Jupyter Notebook or JupyterLab.
 
 \---
-
-## Generated Output Files
-
-### Dataset
-
-```text
-synthetic\_change\_proneness\_paper\_like.csv
-```
-
-### Excel Workbook
-
-```text
-synthetic\_dataset\_model\_results\_improved.xlsx
-```
-
-The workbook contains:
-
-* `All\_Results`
-* `Table\_7`
-* `Table\_8`
-* `Table\_9`
-* `Table\_10`
-* `Table\_11`
-* `Table\_12`
-* `Table\_13`
-
-### Saved Model Components
-
-```text
-standard\_scaler.pkl
-proposed\_cnn\_os\_model.keras
-proposed\_deep\_feature\_scaler.pkl
-proposed\_original\_feature\_svm.pkl
-proposed\_deep\_feature\_svm.pkl
-proposed\_fusion\_config.pkl
 
